@@ -9,7 +9,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -219,8 +222,11 @@ public class LoanRequestVerificationTest {
 		double amount = 3000;
 		String ip = "1.1.1.1";
 		
-		// this is 18.08.2017 00:05:00
-		Date date = new Date(1503007500000L);
+		LocalTime midnight = LocalTime.MIDNIGHT;
+		LocalDate today = LocalDate.now(ZoneId.of("Europe/Berlin"));
+		LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
+		LocalDateTime afterMidnight = todayMidnight.plusMinutes(1);
+		Date date = Date.from(afterMidnight.atZone(ZoneId.systemDefault()).toInstant());
 		int term = 10;
 		
 		List<Loan> loans = Arrays.asList(new Loan(new Date(), true));
