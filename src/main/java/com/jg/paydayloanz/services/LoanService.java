@@ -46,23 +46,19 @@ public class LoanService {
 
 	}
 
-	public double calculateAmountWithInterestAndCommission(int term, double amount) {
+	public double calculateAmountWithInterestAndCommission(int term, double amount, boolean extension) {
 		
-		double interestPercent = Double.parseDouble(env.getProperty("INTEREST"));
+		double interestRegular = Double.parseDouble(env.getProperty("INTEREST"));
+		double interestExtended = Double.parseDouble(env.getProperty("EXTENSION")) *
+									Double.parseDouble(env.getProperty("INTEREST"));
+		
+		double interestPercent = (extension) ? interestExtended :
+											   interestRegular;
+		
 		double commission = Double.parseDouble(env.getProperty("COMMISSION"));
 		double interest = interestPercent * amount;
 		
 		return commission + amount + (interest * ((double)term/365));
-	}
-	
-	public double calculateAmountWithExtension(Loan loan) {
-		
-		double commission = Double.parseDouble(env.getProperty("COMMISSION"));
-		double interest = loan.getAmountWithInterest() - loan.getAmount() - commission;
-		double interestExtended = interest * Double.parseDouble(env.getProperty("EXTENSION"));
-		
-		return loan.getAmount() + interestExtended + commission;
-		
 	}
 
 }

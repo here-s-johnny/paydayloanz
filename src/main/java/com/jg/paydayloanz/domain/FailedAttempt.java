@@ -31,6 +31,16 @@ public class FailedAttempt {
 	//no argument constructor - hibernate requires it
 	public FailedAttempt() {}
 	
+	
+	// for testing purposes
+	public FailedAttempt(Date date) {
+		this.timestamp = date;
+	}
+	public FailedAttempt(Date date, String ip) {
+		this.timestamp = date;
+		this.ip = ip;
+	}
+	
 	public FailedAttempt(int userId, String ip) {
 		this.userId = userId;
 		this.ip = ip;

@@ -3,10 +3,16 @@ package com.jg.paydayloanz.controllers;
 import java.util.Date;
 import java.util.List;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +30,7 @@ import com.jg.paydayloanz.services.AttemptService;
 import com.jg.paydayloanz.services.LoanService;
 
 @Controller
+@PropertySource("file:src/main/resources/config.properties")
 public class LoansController {
 	
 	@Autowired
@@ -100,7 +107,9 @@ public class LoansController {
 		
 		String ip = request.getRemoteAddr();
 		
-		double amountWithInterest = loanService.calculateAmountWithInterestAndCommission(term, amount);
+		boolean extension = false;
+		
+		double amountWithInterest = loanService.calculateAmountWithInterestAndCommission(term, amount, extension);
 		
 		if (loanService.applyForLoan(ip, amount, user, term)) {
 			
@@ -136,7 +145,14 @@ public class LoansController {
 		
 		Loan loanToUpdate = loanService.findByUid(loan);
 		
-		double amountWithInterest = loanService.calculateAmountWithExtension(loanToUpdate);
+		LocalDate endDate = (loanToUpdate.getDeadline()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate startDate = (loanToUpdate.getTimestamp()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		
+		int term = (int)DAYS.between(startDate, endDate);
+		
+		boolean extension = true;
+		
+		double amountWithInterest = loanService.calculateAmountWithInterestAndCommission(term, loanToUpdate.getAmount(), extension);
 				
 		Date previousDate = loanToUpdate.getDeadline();
 		int days = Integer.parseInt(env.getProperty("EXTENSION_TIME"));

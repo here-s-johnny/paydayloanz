@@ -41,7 +41,7 @@ public class LoanRequestVerification {
 	
 	// double checking if the amount entered is within the allowed interval
 	// it should also be checked at the front end level
-	private boolean checkAmount(double amount) {
+	protected boolean checkAmount(double amount) {
 		
 		return amount <= Integer.parseInt(env.getProperty("MAX_AMOUNT")) &&
 				amount >= Integer.parseInt(env.getProperty("MIN_AMOUNT"));
@@ -49,7 +49,7 @@ public class LoanRequestVerification {
 	
 	// double checking if the term entered is within the allowed interval
 	// it should also be checked at the front end level
-	private boolean checkTerm(int term) {
+	protected boolean checkTerm(int term) {
 		
 		return term <= Integer.parseInt(env.getProperty("MAX_DAYS")) &&
 				term >= Integer.parseInt(env.getProperty("MIN_DAYS"));
@@ -57,7 +57,7 @@ public class LoanRequestVerification {
 
 	// checking if the ip used to apply for a loan hasn't been used more 
 	// than the allowed number of times in the last 24h
-	private boolean checkIfIpNotOverloaded(String ip) {
+	protected boolean checkIfIpNotOverloaded(String ip) {
 
 		LocalTime midnight = LocalTime.MIDNIGHT;
 		LocalDate today = LocalDate.now(ZoneId.of(env.getProperty("TIMEZONE")));
@@ -85,7 +85,7 @@ public class LoanRequestVerification {
 
 	// checking the constraint that the maximal amount should not be permitted for loan
 	// at certain time period during the day (namely from 00:00 till SUNRISE)
-	private boolean checkIfNotMaxAtNight(Date date, double value) {
+	protected boolean checkIfNotMaxAtNight(Date date, double value) {
 
 		if (value == Integer.parseInt(env.getProperty("MAX_AMOUNT"))) {
 
@@ -108,7 +108,8 @@ public class LoanRequestVerification {
 		return true;
 	}
 	
-	private boolean checkIfNoLoansPending(User user) {
+	protected boolean checkIfNoLoansPending(User user) {
+		
 		List<Loan> loans = loanDao.findByUserId(user.getUid());
 		
 		List<Loan> loansFiltered = loans.stream().filter(l -> (!l.isPaidOff())).collect(Collectors.toList());
@@ -117,5 +118,5 @@ public class LoanRequestVerification {
 		
 		
 	}
-
+	
 }

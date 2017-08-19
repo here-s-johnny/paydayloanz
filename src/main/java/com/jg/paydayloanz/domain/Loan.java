@@ -49,7 +49,18 @@ public class Loan {
 		this.amount = amount;
 	}
 	
-	//no argument constructor - hibernate requires it
+	// for testing purposes
+	public Loan(Date date, boolean paidOff) {
+		this.timestamp = date;
+		this.paidOff = paidOff;
+	}
+	public Loan(Date date, boolean paidOff, String ip) {
+		this.timestamp = date;
+		this.paidOff = paidOff;
+		this.ip = ip;
+	}
+	
+	// no argument constructor - hibernate requires it
 	public Loan() {}
 	
 	public Loan(double amount, double amountWithInterest, int userId, String ip, boolean accepted, int deadline) {
